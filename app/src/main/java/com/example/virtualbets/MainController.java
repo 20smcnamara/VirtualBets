@@ -7,6 +7,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.inputmethodservice.Keyboard;
 import android.media.Image;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -14,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.FileInputStream;
@@ -36,6 +38,7 @@ public class MainController extends SurfaceView implements SurfaceHolder.Callbac
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
+
         SharedPreferences prefs = context.getSharedPreferences("Data", 0);
         Constants.setUp(prefs, width, height);
 
@@ -51,7 +54,7 @@ public class MainController extends SurfaceView implements SurfaceHolder.Callbac
             e.printStackTrace();
         }
 
-        manager = new SceneManager(LOB);
+        manager = new SceneManager(LOB, context);
         thread = new MainThread(getHolder(),this);
 
         setFocusable(true);

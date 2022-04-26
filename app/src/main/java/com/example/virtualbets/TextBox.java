@@ -11,11 +11,13 @@ public class TextBox {
     private int maxDelay = 5;
     private int delay = maxDelay;
     private int step = 0;
+    private Boolean hidden = false;
     private Boolean background = false;
     private Integer growth = 0;
     private Integer inc;
     private String text = "";
     private Integer[] color = {255, 0, 0, 0};
+    private Integer[] backgroundColor = {255, 0, 0, 0};
     private Integer[] shadow = {255, 0, 0, 0, 0, 0, 0};
     private Rect rect;
 
@@ -24,7 +26,11 @@ public class TextBox {
         this.rect = rect;
 
         if (args.containsKey("background")){
-            background = (Boolean) args.get("background");
+            background = true;
+        }
+        if (args.containsKey("backgroundColor")){
+            background = true;
+            backgroundColor = (Integer[]) args.get("background");
         }
         if (args.containsKey("color")){
             color = (Integer[]) args.get("color");
@@ -35,6 +41,9 @@ public class TextBox {
         if (args.containsKey("growth")){
             growth = (Integer) args.get("growth");
         }
+        if (args.containsKey("hidden")){
+            hidden = (Boolean) args.get("hidden");
+        }
         if (args.containsKey("inc")){
             inc = (Integer) args.get("inc");
         } else {
@@ -43,6 +52,10 @@ public class TextBox {
     }
 
     public void draw(Canvas canvas){
+        if (hidden){
+            return;
+        }
+
         if (growth != 0) {
             delay--;
 
@@ -62,8 +75,22 @@ public class TextBox {
             Rect innerRect = new Rect(rect.left + shadow[4] + shadow[5], rect.top + shadow[4] + shadow[6], rect.right - shadow[4] + shadow[5], rect.bottom - shadow[4] + shadow[6]);
             Draw.drawText(canvas, innerRect, color, text);
         } else {
+            if (background){
+                Draw.drawRect(canvas, rect, backgroundColor);
+            }
             Draw.drawText(canvas, rect, color, text);
         }
     }
 
+    public void toggleVisibility() {
+        hidden = !hidden;
+    }
+
+    public void show(){
+        hidden = false;
+    }
+
+    public void hide(){
+        hidden = true;
+    }
 }

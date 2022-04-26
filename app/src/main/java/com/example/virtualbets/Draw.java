@@ -14,6 +14,8 @@ public class Draw {
     public static Integer[] BLUE = {255, 0, 0, 255};
     public static Integer[] CYAN = {255, 0, 255, 255};
     public static Integer[] BACK = {255, 75, 75, 75};
+    public static Integer[] BLACK = {255, 0, 0, 0};
+    public static Integer[] WHITE = {255, 255, 255, 255};
 
     private static Paint paint;
 
@@ -49,9 +51,26 @@ public class Draw {
         paint.setColor(RGBtoInt(color));
         paint.setAlpha(color[0]);
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(rect.height() * 0.6f);
+        paint.setTextSize(rect.height() * 0.8f);
+
+        Rect bounds = new Rect();
+        paint.getTextBounds(txt, 0, txt.length(), bounds);
+        float diff = bounds.width() - rect.width();
+        float size = paint.getTextSize();
+        while (diff > 0) {
+            paint.setTextSize(paint.getTextSize() - 2);
+            paint.getTextBounds(txt, 0, txt.length(), bounds);
+            diff = bounds.width() - rect.width();
+        }
 
         canvas.drawText(txt, rect.left + rect.width() / 2.0f, rect.bottom - (rect.height() / 4f), paint);
+        paint.setTextSize(size);
+    }
+
+    public static void drawUnderlinedText(Canvas canvas, Rect rect, Integer[] color, String txt){
+        paint.setUnderlineText(true);
+        drawText(canvas, rect, color, txt);
+        paint.setUnderlineText(false);
     }
 
 }

@@ -17,7 +17,6 @@ import java.util.Random;
 
 public class StartScene implements Scene{
 
-    private Rect BackRect;
     private final ArrayList<Button> buttons = new ArrayList<>();
     private final ArrayList<TextBox> textBoxes = new ArrayList<>();
     private int state = 0;
@@ -37,6 +36,8 @@ public class StartScene implements Scene{
             Rect enterRect = new Rect( (int) (Constants.width * 0.25), (int) (Constants.height * 0.65), (int) (Constants.width * 0.75), (int) (Constants.height * 0.75));
             HashMap<String, Object> args = new HashMap<>();
             args.put("txt", "Enter");
+            args.put("color", new Integer[] {255, 255, 125, 70});
+            args.put("txtColor", new Integer[] {255, 175, 75, 35});
             Button enterButton = new SimpleButton(enterRect, 1, args);
             buttons.add(enterButton);
 
@@ -44,6 +45,8 @@ public class StartScene implements Scene{
             args = new HashMap<>();
             System.out.println(registerRect);
             args.put("txt", "Register");
+            args.put("color", new Integer[] {255, 255, 125, 70});
+            args.put("txtColor", new Integer[] {255, 175, 75, 35});
             Button registerButton = new SimpleButton(registerRect, 2, args);
             buttons.add(registerButton);
 
@@ -80,10 +83,8 @@ public class StartScene implements Scene{
 
     public void drawBackground(Canvas canvas) { //Setup background
         if (background != null && state > 0) {
-            //Draw.drawRect(canvas, BackRect, Draw.BACK);
             Draw.drawPNG(canvas, background);
         } else if (Constants.started) {
-            //BackRect = new Rect(0, 0, Constants.width, Constants.height);
         }
 
         if (state == 1) {
@@ -124,11 +125,11 @@ public class StartScene implements Scene{
     }
 
     private void tryLogin(){
-        returnTo = 1; // TODO add checks
+        returnTo = Constants.LOGIN_SCENE;
     }
 
     private void gotoRegister(){
-        returnTo = 2; // No checks needed
+        returnTo = Constants.REGISTER_SCENE;
     }
 
     private String getSecretMsg(){ //If you really want to know change the random statement don't try to read this

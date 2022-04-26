@@ -9,6 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VirtualBets">
+        <meta-data
+            android:name="startscreen"
+            android:resource="@drawable/startscreen" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
