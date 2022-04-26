@@ -3,6 +3,7 @@ package com.example.virtualbets;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -47,6 +48,11 @@ public class Draw {
         canvas.drawBitmap(b, 0, 0, paint);
     }
 
+
+    public static void drawPNG(Canvas canvas, Bitmap b, int x, int y){
+        canvas.drawBitmap(b, x, y, paint);
+    }
+
     public static void drawText(Canvas canvas, Rect rect, Integer[] color, String txt){
         paint.setColor(RGBtoInt(color));
         paint.setAlpha(color[0]);
@@ -73,4 +79,9 @@ public class Draw {
         paint.setUnderlineText(false);
     }
 
+    public static Bitmap flipBitmap(Bitmap source, boolean xFlip, boolean yFlip) {
+        Matrix matrix = new Matrix();
+        matrix.postScale(xFlip ? -1 : 1, yFlip ? -1 : 1, source.getWidth() / 2f, source.getHeight() / 2f);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
 }

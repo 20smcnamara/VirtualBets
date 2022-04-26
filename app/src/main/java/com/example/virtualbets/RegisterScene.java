@@ -208,6 +208,8 @@ public class RegisterScene implements Scene{
             return;
         }
 
+        Constants.editor.putString("user", textForms.get(0).getString());
+
         returnTo = Constants.HOME_SCENE; // TODO add checks
     }
 

@@ -40,11 +40,10 @@ public class MainController extends SurfaceView implements SurfaceHolder.Callbac
 
 
         SharedPreferences prefs = context.getSharedPreferences("Data", 0);
-        Constants.setUp(prefs, width, height);
+        Constants.setUp(prefs, getResources(), context, width, height);
 
         //Load images
         ArrayList<Bitmap> LOB = new ArrayList<>();
-
         try {
             Bitmap startImage = BitmapFactory.decodeResource(getResources(), R.drawable.startscreen);
             startImage = Bitmap.createScaledBitmap(startImage, Constants.width, Constants.height, false);

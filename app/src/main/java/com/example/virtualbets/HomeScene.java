@@ -22,8 +22,16 @@ public class HomeScene implements Scene{
 
     @Override
     public int update() { //Check for updates in state
+        nextScene:
         if (state == 0 && Constants.started){ //We can start creating the details
             state++; // Init marker
+
+            if (!Constants.sharedPref.contains("CommunityCount")){
+                returnTo = Constants.COMMUNITY_SETUP_SCENE;
+                break nextScene;
+            } else {
+
+            }
         }
 
         if (returnTo != -1) { //We can switch to another scene
