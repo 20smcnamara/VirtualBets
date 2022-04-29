@@ -51,6 +51,10 @@ public class TextBox {
         }
     }
 
+    public void updateText(String text){
+        this.text = text;
+    }
+
     public void draw(Canvas canvas){
         if (hidden){
             return;

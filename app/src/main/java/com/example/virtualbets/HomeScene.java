@@ -1,5 +1,6 @@
 package com.example.virtualbets;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -10,13 +11,17 @@ import java.util.HashMap;
 
 public class HomeScene implements Scene{
 
-    private final ArrayList<Button> buttons = new ArrayList<>();
-    private final ArrayList<TextBox> textBoxes = new ArrayList<>();
     private int state = 0;
     private int returnTo = -1;
+
+    private final ArrayList<Button> buttons = new ArrayList<>();
+    private final ArrayList<TextBox> textBoxes = new ArrayList<>();
+
+    private AccountInfo accountInfo;
+
     Bitmap background;
 
-    public HomeScene(Bitmap background) {
+    public HomeScene(Context context, Bitmap background) {
         this.background = background;
     }
 
@@ -26,20 +31,56 @@ public class HomeScene implements Scene{
         if (state == 0 && Constants.started){ //We can start creating the details
             state++; // Init marker
 
-            if (!Constants.sharedPref.contains("CommunityCount")){
+            if (!Constants.sharedPref.contains("CommunityCount")) {
                 returnTo = Constants.COMMUNITY_SETUP_SCENE;
                 break nextScene;
-            } else {
+            } else if (!Constants.sharedPref.contains("PetCount")) {
+                returnTo = Constants.PET_SETUP_SCENE;
+                break nextScene;
+            }
 
+            if (returnTo != -1) {
+                ArrayList<Community> communities = new ArrayList<>();
+
+                for (int i = 0; i < Constants.sharedPref.getInt("CommunityCount", 0); i++) {
+                    String Cname = "Community" + i;
+                    int j = Constants.sharedPref.getInt(Cname, -1); // Turn users community index into constants community index
+
+                    if (j != 0) {
+                        communities.add(Constants.communities.get(j));
+                    }
+                }
+
+                ArrayList<Pet> pets = new ArrayList<>();
+
+                for (int i = 0; i < Constants.sharedPref.getInt("PetCount", 0); i++) {
+                    String Pname = "Pet" + i;
+                    String j = Constants.sharedPref.getString(Pname, "PetNotFound"); // Turn users community index into constants community index
+
+                    if (!j.equals("PetNotFound")) {
+                        // 1 Name, 2 Type, 3 HatId, 4 ShoeId
+                        String[] data = j.split(":");
+                        Pet p = new Pet(data[0], Constants.petTypes.get(data[1]));
+
+                        for (int k = 0; k < 2; k++){
+                            int id = Integer.parseInt(data[2 + k]);
+                            p.addWearable(Constants.getWearable(id, k));
+                        }
+                    }
+                }
+
+                accountInfo = new AccountInfo(pets, communities);
             }
         }
 
         if (returnTo != -1) { //We can switch to another scene
             state = 0;
-            return returnTo;
-        } else {
-            return -1;
+            int goTo = returnTo;
+            returnTo = -1;
+            return goTo;
         }
+
+        return -1;
     }
 
     @Override

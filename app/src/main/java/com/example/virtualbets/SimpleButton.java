@@ -27,7 +27,10 @@ public class SimpleButton implements Button{
         box = r;
 
         if (args.containsKey("style")) {
-            style = (int) args.get("style");
+            Integer result = (Integer) args.get("style");
+            if (result != null){
+                style = result;
+            }
         }
 
         if (args.containsKey("txt")) {
@@ -67,6 +70,6 @@ public class SimpleButton implements Button{
                 return id;
             }
         }
-        return 0;
+        return -1;
     }
 }

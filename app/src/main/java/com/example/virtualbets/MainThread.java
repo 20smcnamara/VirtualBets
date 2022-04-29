@@ -71,7 +71,6 @@ public class MainThread extends  Thread {
                 if (frameCount == MAX_FPS) {
                     averageFPS = MAX_FPS / totalTime;
                     if ( (int) averageFPS < MAX_FPS / 2 ){
-                        System.out.println(averageFPS +  " : " + totalTime);
                     }
                     frameCount = 0;
                     totalTime = 0;

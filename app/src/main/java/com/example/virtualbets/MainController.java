@@ -4,6 +4,7 @@ package com.example.virtualbets;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -26,6 +27,8 @@ public class MainController extends SurfaceView implements SurfaceHolder.Callbac
 
     private MainThread thread;
     private SceneManager manager;
+    private Resources resources;
+    private String packageName;
 
     public MainController(Context context){
         super(context);
@@ -38,14 +41,17 @@ public class MainController extends SurfaceView implements SurfaceHolder.Callbac
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
-
         SharedPreferences prefs = context.getSharedPreferences("Data", 0);
-        Constants.setUp(prefs, getResources(), context, width, height);
+
+        resources = getResources();
+        packageName = context.getPackageName();
+
+        Constants.setUp(prefs, this, width, height);
 
         //Load images
         ArrayList<Bitmap> LOB = new ArrayList<>();
         try {
-            Bitmap startImage = BitmapFactory.decodeResource(getResources(), R.drawable.startscreen);
+            Bitmap startImage = BitmapFactory.decodeResource(resources, R.drawable.startscreen);
             startImage = Bitmap.createScaledBitmap(startImage, Constants.width, Constants.height, false);
             LOB.add(startImage);
 
@@ -53,10 +59,17 @@ public class MainController extends SurfaceView implements SurfaceHolder.Callbac
             e.printStackTrace();
         }
 
+        getResources().getIdentifier("telon", "drawable", "virtualbets");
+
         manager = new SceneManager(LOB, context);
         thread = new MainThread(getHolder(),this);
 
         setFocusable(true);
+    }
+
+    public Bitmap findImage(String name) {
+        int imageID = resources.getIdentifier(name, "drawable", packageName);
+        return BitmapFactory.decodeResource(resources, imageID);
     }
 
     @Override
@@ -98,9 +111,5 @@ public class MainController extends SurfaceView implements SurfaceHolder.Callbac
     public void draw(Canvas canvas){
         super.draw(canvas);
         manager.draw(canvas);
-    }
-
-    public void setScene(int scene){
-        manager.setScene(scene);
     }
 }

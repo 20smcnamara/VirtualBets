@@ -9,22 +9,21 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class LoginScene implements Scene{
+public class EventScene implements Scene{
 
     private boolean focused = true;
     private boolean good = false;
     private int activeText = -1;
-    private final static int HINT = 2;
     private final ArrayList<Button> buttons = new ArrayList<>();
     private final ArrayList<TextForm> textForms = new ArrayList<>();
     private final ArrayList<TextBox> labelBoxes = new ArrayList<>();
-    //private final ArrayList<TextBox> helpBoxes = new ArrayList<>();
+    private final ArrayList<TextBox> helpBoxes = new ArrayList<>();
     private int state = 0;
     private int returnTo = -1;
     Bitmap background;
     Context context;
 
-    public LoginScene(Context context, Bitmap background) {
+    public EventScene(Context context, Bitmap background) {
         this.context = context;
         this.background = background;
     }
@@ -37,15 +36,15 @@ public class LoginScene implements Scene{
             // Login and register buttons
             Rect enterRect = new Rect( (int) (Constants.width * 0.25), (int) (Constants.height * 0.65), (int) (Constants.width * 0.75), (int) (Constants.height * 0.75));
             HashMap<String, Object> args = new HashMap<>();
-            args.put("txt", "Login");
+            args.put("txt", "Create Event");
             args.put("color", new Integer[] {255, 255, 125, 70});
             args.put("txtColor", new Integer[] {255, 175, 75, 35});
             Button enterButton = new SimpleButton(enterRect, 1, args);
             buttons.add(enterButton);
 
-            Rect registerRect = new Rect( (int) (Constants.width * 0.20), (int) (Constants.height * 0.80), (int) (Constants.width * 0.80), (int) (Constants.height * 0.85));
+            Rect registerRect = new Rect( (int) (Constants.width * 0.10), (int) (Constants.height * 0.80), (int) (Constants.width * 0.90), (int) (Constants.height * 0.85));
             args = new HashMap<>();
-            args.put("txt", "Register");
+            args.put("txt", "Back");
             args.put("txtColor", new Integer[] {255, 125, 60, 25});
             Button registerButton = new WeakButton(registerRect, 2, args);
             buttons.add(registerButton);
@@ -65,6 +64,14 @@ public class LoginScene implements Scene{
             TextForm txtForm = new TextForm(0, userNameRect, args);
             textForms.add(txtForm);
 
+            Rect userHintRect = new Rect( 0, (int) (Constants.height * 0.275), Constants.width, (int) (Constants.height * 0.32));
+            args = new HashMap<>();
+            args.put("color", new Integer[] {255, 200, 100, 50,});
+            args.put("hidden", true);
+            args.put("background", true);
+            TextBox userHintBox = new TextBox("Usernames must be of length 5-16", userHintRect, args);
+            helpBoxes.add(userHintBox);
+
             //Password GUI
             Rect passLabelRect = new Rect( (int) (Constants.width * 0.10), (int) (Constants.height * 0.32), (int) (Constants.width * 0.90), (int) (Constants.height * 0.42));
             args = new HashMap<>();
@@ -80,21 +87,22 @@ public class LoginScene implements Scene{
             TextForm passForm = new TextForm(1, passRect, args);
             textForms.add(passForm);
 
-            //Hint box
-            Rect passHintRect = new Rect( 0, (int) (Constants.height * 0.90), Constants.width, (int) (Constants.height * 0.95));
+            Rect passHintRect = new Rect( 0, (int) (Constants.height * 0.55), Constants.width, (int) (Constants.height * 0.6));
             args = new HashMap<>();
-            args.put("color", new Integer[] {255, 255, 0, 0,});
+            args.put("color", new Integer[] {255, 200, 100, 50,});
             args.put("hidden", true);
             args.put("background", true);
-            TextBox passHintBox = new TextBox("Please Enter a username and password", passHintRect, args);
-            labelBoxes.add(passHintBox);
+            TextBox passHintBox = new TextBox("Passwords must be of length >6 w/o spaces", passHintRect, args);
+            helpBoxes.add(passHintBox);
         }
 
         if (returnTo != -1) { //We can switch to another scene
             state = 0;
             int goTo = returnTo;
             good = false;
-            labelBoxes.get(HINT).hide();
+            for (TextBox textBox: helpBoxes){
+                textBox.hide();
+            }
             returnTo = -1;
             return goTo;
         } else {
@@ -115,6 +123,10 @@ public class LoginScene implements Scene{
         }
 
         for (TextBox tb : labelBoxes){
+            tb.draw(canvas);
+        }
+
+        for (TextBox tb : helpBoxes){
             tb.draw(canvas);
         }
 
@@ -148,10 +160,10 @@ public class LoginScene implements Scene{
                 for (Button button : buttons) {
                     switch (button.receiveTouch(event)) {
                         case 1:
-                            Login();
+                            Register();
                             break;
                         case 2:
-                            gotoRegister();
+                            gotoLogin();
                             break;
                         default:
                             break;
@@ -179,21 +191,30 @@ public class LoginScene implements Scene{
         }
     }
 
-    private void Login(){
+    private void Register(){
+        int index = 0;
+        boolean passed = true;
         for (TextForm textForm: textForms){
             if (!textForm.isValid()){
-                labelBoxes.get(HINT).show();
-                return;
+                helpBoxes.get(index).show();
+                passed = false;
+            } else {
+                helpBoxes.get(index).hide();
             }
+            index++;
         }
 
-        labelBoxes.get(HINT).hide();
+        if (!passed){
+            return;
+        }
+
+        Constants.editor.putString("user", textForms.get(0).getString());
 
         returnTo = Constants.HOME_SCENE; // TODO add checks
     }
 
-    private void gotoRegister(){
-        returnTo = Constants.REGISTER_SCENE; // No checks needed
+    private void gotoLogin(){
+        returnTo = Constants.LOGIN_SCENE; // No checks needed
     }
 
 }

@@ -12,17 +12,20 @@ public class Wearable {
 
     public final static int HAT = 0;
     public final static int SHOES = 1;
+    public final static int LAST_TYPE_ID = SHOES;
 
     private final String name;
+    private final String imageName;
     private final Bitmap image;
     private final HashSet<String> tags;
 
-    public Wearable(int id, int type, String name, Bitmap image, HashSet<String> tags){
+    public Wearable(int id, int type, String name, String shortHand, Bitmap image, HashSet<String> tags){
         this.id = id;
         this.type = type;
         this.name = name;
         this.tags = tags;
         this.image = image;
+        this.imageName = shortHand;
     }
 
     public int getId() {
@@ -55,5 +58,9 @@ public class Wearable {
             toDraw = Draw.flipBitmap(image, true, false);
         }
         Draw.drawPNG(canvas, toDraw, loc.getX() - image.getWidth() / 2, loc.getY() - image.getHeight() / 2);
+    }
+
+    public String getImage() {
+        return imageName;
     }
 }

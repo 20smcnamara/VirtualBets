@@ -1,31 +1,30 @@
 package com.example.virtualbets;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Wizard { //Not efficient don't look
 
-    public static ArrayList<Wearable> loadWearables(){
+    public static ArrayList<ArrayList<Wearable>> loadWearables(){
+        ArrayList<ArrayList<Wearable>> LLOW = new ArrayList<>();
         ArrayList<Wearable> LOW = new ArrayList<>();
 
-        File data = new File("WizardData");
-        String FullData = data.toString();
+        String FullData = Constants.wiz.readClothes();
+
         int mode = -1;
         int id = 0;
+        int index = 0;
 
         for (String s: FullData.split("\n")){
             if (s.equals("CLOTHES")){
                 mode = 0;
                 id = 0;
-            }
-            if (mode == 0 && s.equals("END")){
+            } else if (mode == 0 && s.equals("END")){
                 break;
-            }
-            if (mode == 0){
+            } else if (mode == 0){
                 String[] parts = s.split("\\|"); //Split aspects
 
                 HashSet<String> tags = new HashSet<>(); //Find tags
@@ -37,40 +36,53 @@ public class Wizard { //Not efficient don't look
                     }
                 }
 
-                switch (parts[0]) { //Make wearables
-                    case "HAT":
-                        LOW.add(new Wearable(id, Wearable.HAT, parts[2], Constants.getImage(parts[1]), tags));
-                    case "SHOES":
-                        LOW.add(new Wearable(id, Wearable.SHOES, parts[2], Constants.getImage(parts[1]), tags));
+                int type = Integer.parseInt(parts[0]);
+
+                if (type > Wearable.LAST_TYPE_ID) {
+                    System.out.println("Error reading wearables. Consider updating max wearable.");
+                    break;
                 }
+
+                String name = parts[2];
+
+                String imageName = parts[1];
+                Bitmap image = Constants.getImage(imageName);
+
+                if (index != Integer.parseInt(parts[0])) {
+                    LLOW.add(LOW);
+
+                    id = 0;
+                    LOW = new ArrayList<>();
+                }
+
+                LOW.add(new Wearable(id, type, name, imageName, image, tags));
 
                 id++;
             }
         }
 
-        return LOW;
+        return LLOW;
     }
 
-    public static ArrayList<Pet> loadPets(){
-        ArrayList<Pet> LOP = new ArrayList<>();
+    public static HashMap<String, PetType> loadPets(){
+        HashMap<String, PetType> toReturn = new HashMap<>();
 
-        File data = new File("WizardData");
-        String FullData = data.toString();
+        String FullData = Constants.wiz.readPets();
+
         int mode = -1;
 
         for (String line: FullData.split("\n")){
             if (line.equals("PETS")){
                 mode = 1;
-            }
-            if (mode == 1 && line.equals("END")){
+            } else if (mode == 1 && line.equals("END")){
                 break;
-            }
-            if (mode == 1) {
+            } else if (mode == 1) {
                 String[] lineData = line.split("\\|");
 
                 String type = lineData[0];
 
-                Bitmap image = Constants.getImage(lineData[1]);
+                String shorthand = lineData[1];
+                Bitmap image = Constants.getImage(shorthand);
 
                 ArrayList<Location> heads = new ArrayList<>();
                 for (String headInfo : lineData[2].split(":")) {
@@ -80,6 +92,7 @@ public class Wizard { //Not efficient don't look
                         String[] locInfo = headInfo.split(",");
                         int x = Integer.parseInt(locInfo[0]);
                         int y = Integer.parseInt(locInfo[1]);
+                        System.out.println("("+shorthand+")");
                         heads.add(new Location(x, y, image.getWidth(), image.getHeight()));
                     }
                 }
@@ -98,11 +111,11 @@ public class Wizard { //Not efficient don't look
                     }
                 }
 
-                new Pet(type, image, heads, feet);
+                toReturn.put(shorthand, new PetType(type, shorthand, heads, feet));
             }
         }
 
-        return LOP;
+        return toReturn;
     }
 
 }

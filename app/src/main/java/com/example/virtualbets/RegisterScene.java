@@ -21,10 +21,8 @@ public class RegisterScene implements Scene{
     private int state = 0;
     private int returnTo = -1;
     Bitmap background;
-    Context context;
 
-    public RegisterScene(Context context, Bitmap background) {
-        this.context = context;
+    public RegisterScene(Bitmap background) {
         this.background = background;
     }
 

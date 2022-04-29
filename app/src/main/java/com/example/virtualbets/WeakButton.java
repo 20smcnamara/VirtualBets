@@ -49,6 +49,6 @@ public class WeakButton implements Button{
                 return id;
             }
         }
-        return 0;
+        return -1;
     }
 }

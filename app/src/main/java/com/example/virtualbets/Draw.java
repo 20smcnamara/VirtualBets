@@ -16,6 +16,8 @@ public class Draw {
     public static Integer[] CYAN = {255, 0, 255, 255};
     public static Integer[] BACK = {255, 75, 75, 75};
     public static Integer[] BLACK = {255, 0, 0, 0};
+    public static Integer[] LIGHT_ORANGE = {255, 255, 125, 62};
+    public static Integer[] DARK_ORANGE = {255, 150, 75, 33};
     public static Integer[] WHITE = {255, 255, 255, 255};
 
     private static Paint paint;
