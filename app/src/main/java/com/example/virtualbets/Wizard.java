@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 
 public class Wizard { //Not efficient don't look
 
@@ -19,10 +20,12 @@ public class Wizard { //Not efficient don't look
         int index = 0;
 
         for (String s: FullData.split("\n")){
+            System.out.println(s + ":" + mode);
             if (s.equals("CLOTHES")){
                 mode = 0;
                 id = 0;
             } else if (mode == 0 && s.equals("END")){
+                LLOW.add(LOW);
                 break;
             } else if (mode == 0){
                 String[] parts = s.split("\\|"); //Split aspects
@@ -45,8 +48,12 @@ public class Wizard { //Not efficient don't look
 
                 String name = parts[2];
 
-                String imageName = parts[1];
+                String imageName = parts[1].toLowerCase(Locale.ROOT);
                 Bitmap image = Constants.getImage(imageName);
+
+                if (image == null) {
+                    System.out.println("Fuck: " + imageName);
+                }
 
                 if (index != Integer.parseInt(parts[0])) {
                     LLOW.add(LOW);
@@ -92,7 +99,6 @@ public class Wizard { //Not efficient don't look
                         String[] locInfo = headInfo.split(",");
                         int x = Integer.parseInt(locInfo[0]);
                         int y = Integer.parseInt(locInfo[1]);
-                        System.out.println("("+shorthand+")");
                         heads.add(new Location(x, y, image.getWidth(), image.getHeight()));
                     }
                 }

@@ -97,7 +97,7 @@ public class PetSetupScene implements Scene{
             helpBoxes.add(userHintBox);
 
             //Item demo
-            imageRect = new Rect( (int) (Constants.width * 0.3), (int) (Constants.height * 0.2), (int) (Constants.width * 0.7), (int) (Constants.height * 0.8) );
+            imageRect = new Rect( (int) (Constants.width * 0.35), (int) (Constants.height * 0.2), (int) (Constants.width * 0.65), (int) (Constants.height * 0.8) );
 
 
             ArrayList<Bitmap> LOB = new ArrayList<>();
@@ -109,6 +109,7 @@ public class PetSetupScene implements Scene{
             }
 
             images.add(LOB);
+            System.out.println("Start" + Constants.wearables.size());
 
             for (ArrayList<Wearable> LOW: Constants.wearables) {
                 ArrayList<Bitmap> LOBB = new ArrayList<>();
@@ -120,6 +121,8 @@ public class PetSetupScene implements Scene{
                 }
 
                 images.add(LOBB);
+
+                System.out.println("Group added");
             }
         }
 
@@ -167,8 +170,8 @@ public class PetSetupScene implements Scene{
     }
 
     private void drawItem(Canvas canvas) {
-        if (state > 0) {
-            Draw.drawPNG(canvas, images.get(state - 1).get(index));
+        if (state > 0 && state != 4) {
+            Draw.drawPNG(canvas, images.get(state - 1).get(index), imageRect.left, imageRect.top);
         }
     }
 
@@ -252,29 +255,32 @@ public class PetSetupScene implements Scene{
             case 1:
                 EnterCode();
                 petType = (PetType) Constants.petTypes.values().toArray()[index];
+                index = 0;
                 labelBoxes.get(0).hide();
                 break;
 
             case 2:
                 hat = Constants.getWearable(index, Wearable.HAT);
+                index = 0;
                 break;
 
             case 3:
                 shoes = Constants.getWearable(index, Wearable.SHOES);
+                index = 0;
                 break;
 
             case 4:
+                index = 0;
                 submit();
-                return;
+                break;
 
             default:
                 break;
         }
 
-        labelBoxes.get(0).updateText(labels[state]);
+        labelBoxes.get(0).updateText(labels[state - 1]);
 
         state++;
-        index = 0;
     }
 
     private void submit() {
@@ -335,23 +341,22 @@ public class PetSetupScene implements Scene{
     }
 
     private void prevItem() {
-        System.out.println(buttons.size());
 
-        if (index > 0 && state > 0) {
+        if (state > 0) {
             switch (state) {
                 case 1: //Pet type picking
                     if (index == Constants.petTypes.size() - 1) {
-                        ((ArrowButton) buttons.get(RIGHT)).show();
+                        ((ArrowButton) (buttons.get(RIGHT))).show();
                     }
 
                 case 2: //Hat picking
                     if (index == Constants.wearables.get(Wearable.HAT).size() - 1) {
-                        ((ArrowButton) buttons.get(RIGHT)).show();
+                        ((ArrowButton) (buttons.get(RIGHT))).show();
                     }
 
                 case 3: //Shoes
                     if (index == Constants.wearables.get(Wearable.SHOES).size() - 1) {
-                        ((ArrowButton) buttons.get(RIGHT)).show();
+                        ((ArrowButton) (buttons.get(RIGHT))).show();
                     }
             }
         }
@@ -359,8 +364,10 @@ public class PetSetupScene implements Scene{
         if (state > 0) {
             if (index > 0) {
                 index--;
-            } else if (index == 0) {
-                ((ArrowButton) buttons.get(LEFT)).hide();
+
+                if (index == 0) {
+                    ((ArrowButton) buttons.get(LEFT)).hide();
+                }
             }
         }
     }

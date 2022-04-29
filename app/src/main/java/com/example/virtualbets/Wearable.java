@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import java.util.HashSet;
+import java.util.Locale;
 
 public class Wearable {
 
@@ -61,6 +62,6 @@ public class Wearable {
     }
 
     public String getImage() {
-        return imageName;
+        return imageName.toLowerCase(Locale.ROOT);
     }
 }

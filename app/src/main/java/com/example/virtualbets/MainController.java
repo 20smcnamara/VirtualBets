@@ -69,7 +69,9 @@ public class MainController extends SurfaceView implements SurfaceHolder.Callbac
 
     public Bitmap findImage(String name) {
         int imageID = resources.getIdentifier(name, "drawable", packageName);
-        return BitmapFactory.decodeResource(resources, imageID);
+        Bitmap b = BitmapFactory.decodeResource(resources, imageID);
+        System.out.println(b);
+        return b;
     }
 
     @Override

@@ -14,9 +14,15 @@ public class WizardData {
                                                                 "arrowleft",
                                                                 "arrowup",
                                                                 "arrowdown",
+                                                                "basichat",
+                                                                "wpihat",
+                                                                "wpishoe",
+                                                                "basicshoe",
                                                             };
     private static final String[] Clothes = new String[] { "0|basicHat|Basic Hat|+",
-                                                            "0|wpiHat|WPI Hat|WPI-" };
+                                                            "0|wpiHat|WPI Hat|WPI-",
+                                                            "1|wpiShoe|WPI Shoe|WPI-",
+                                                            "1|basicShoe|Basic Shoe|WPI-"};
     private static final String[] Pets = new String[] { "Tongus Elongus|telon|255,13,20,10:|250,357,17,15:20,355,17,15",
                                                             "Steve|steve|190,30,40,40:|136,365,132,60:" };
 
