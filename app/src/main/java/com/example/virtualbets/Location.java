@@ -1,35 +1,34 @@
 package com.example.virtualbets;
 
+import android.graphics.Rect;
+
 public class Location {
 
-    private final int x;
-    private final int y;
-
-    private float ratioX;
-    private float ratioY;
+    private final Rect rect;
     private int direction = 0;
 
     public Location(int x, int y, int width, int height) {
-        this.ratioX = 1f / width * x;
-        this.ratioY = 1f / height * y;
-        this.x = x;
-        this.y = y;
-    }
-
-    public float getRatioX(){
-        return ratioX;
-    }
-
-    public float getRatioY() {
-        return ratioY;
+        this.rect = new Rect(x, y, x + width, y + height);
     }
 
     public int getX() {
-        return x;
+        return rect.left;
     }
 
     public int getY() {
-        return y;
+        return rect.top;
+    }
+
+    public Rect getRect() {
+        return rect;
+    }
+
+    public float getXRatio(int x) {
+        return 1f * rect.width() / x;
+    }
+
+    public float getYRatio(int y) {
+        return 1f * rect.height() / y;
     }
 
     public int getDir() {

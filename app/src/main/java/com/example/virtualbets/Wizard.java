@@ -93,7 +93,7 @@ public class Wizard { //Not efficient don't look
 
                 ArrayList<Location> heads = new ArrayList<>();
                 for (String headInfo : lineData[2].split(":")) {
-                    if (headInfo.equals("")) {
+                    if (headInfo.isEmpty()) {
                         break;
                     } else {
                         String[] locInfo = headInfo.split(",");

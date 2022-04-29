@@ -2,6 +2,7 @@ package com.example.virtualbets;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -46,6 +47,7 @@ public class Wearable {
     }
 
     public void draw(Canvas canvas, Location loc, float scale){
+        System.out.println(1);
         Bitmap newMap = Bitmap.createScaledBitmap(image, (int) (image.getWidth() * scale), (int) (image.getHeight() * scale), false);
         if (loc.getDir() == 1) {
             newMap = Draw.flipBitmap(newMap, true, false);
@@ -54,11 +56,25 @@ public class Wearable {
     }
 
     public void draw(Canvas canvas, Location loc){
+        System.out.println(2);
         Bitmap toDraw = image;
         if (loc.getDir() == 1) {
             toDraw = Draw.flipBitmap(image, true, false);
         }
         Draw.drawPNG(canvas, toDraw, loc.getX() - image.getWidth() / 2, loc.getY() - image.getHeight() / 2);
+    }
+
+    public void draw(Canvas canvas, Rect loc, int direction){
+        System.out.println(3);
+        Bitmap toDraw = image;
+
+        if (direction == 1) {
+            toDraw = Draw.flipBitmap(image, true, false);
+        }
+
+        toDraw = Bitmap.createScaledBitmap(toDraw, loc.width(), loc.height(), false);
+
+        Draw.drawPNG(canvas, toDraw, loc.left, loc.top);
     }
 
     public String getImage() {

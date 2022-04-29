@@ -22,7 +22,7 @@ public class PetSetupScene implements Scene{
     private final ArrayList<TextForm> textForms = new ArrayList<>();
     private final ArrayList<TextBox> labelBoxes = new ArrayList<>();
     private final ArrayList<TextBox> helpBoxes = new ArrayList<>();
-    private final static String[] labels = new String[] {"Pick a name", "Pick a hat", "Pick some shoes"};
+    private final static String[] labels = new String[] {"Pick a pet", "Pick a hat", "Pick some shoes", "Finalize"};
     private int state = 0;
     private int index = 0;
     private int returnTo = -1;
@@ -74,30 +74,45 @@ public class PetSetupScene implements Scene{
             leftButton.hide();
             buttons.add(leftButton);
 
-            //Code box GUI
-            Rect codeRect = new Rect( (int) (Constants.width * 0.05), (int) (Constants.height * 0.05), (int) (Constants.width * 0.95), (int) (Constants.height * 0.15));
+            // Label rect
+            Rect labeRect = new Rect( (int) (Constants.width * 0.05), (int) (Constants.height * 0.22), (int) (Constants.width * 0.95), (int) (Constants.height * 0.29));
             args = new HashMap<>();
             args.put("color", new Integer[] {255, 200, 100, 59,});
-            TextBox userBox = new TextBox(labels[0], codeRect, args);
-            labelBoxes.add(userBox);
+            TextBox labeBox = new TextBox(labels[0], labeRect, args);
+            labelBoxes.add(labeBox);
 
-            Rect codeBoxRect = new Rect( (int) (Constants.width * 0.02), (int) (Constants.height * 0.15), (int) (Constants.width * 0.98), (int) (Constants.height * 0.25));
+            //Code box GUI
+            Rect codeRect = new Rect( (int) (Constants.width * 0.05), (int) (Constants.height * 0.01), (int) (Constants.width * 0.95), (int) (Constants.height * 0.10));
+            args = new HashMap<>();
+            args.put("color", new Integer[] {255, 200, 100, 59,});
+            TextBox userBox = new TextBox("Pick a name", codeRect, args);
+            labelBoxes.add(0, userBox);
+
+            Rect codeBoxRect = new Rect( (int) (Constants.width * 0.02), (int) (Constants.height * 0.11), (int) (Constants.width * 0.98), (int) (Constants.height * 0.20));
             args = new HashMap<>();
             args.put("Requirements", Constants.PET_NAME_REQUIREMENTS);
             args.put("Required", true);
             TextForm txtForm = new TextForm(0, codeBoxRect, args);
             textForms.add(txtForm);
 
-            Rect codeHintRect = new Rect( 0, (int) (Constants.height * 0.275), Constants.width, (int) (Constants.height * 0.325));
+            Rect codeHintRect = new Rect( 0, (int) (Constants.height * 0.21), Constants.width, (int) (Constants.height * 0.25));
             args = new HashMap<>();
             args.put("color", new Integer[] {255, 200, 100, 50,});
             args.put("hidden", true);
             args.put("background", true);
-            TextBox userHintBox = new TextBox("Names should be less than 26 characters", codeHintRect, args);
+            TextBox userHintBox = new TextBox("Names must be less than 26 characters", codeHintRect, args);
             helpBoxes.add(userHintBox);
 
+            //No item selection box
+            Rect noRect = new Rect( (int) (Constants.width * 0.05), (int) (Constants.height * 0.4), (int) (Constants.width * 0.95), (int) (Constants.height * 0.6));
+            args = new HashMap<>();
+            args.put("color", new Integer[] {255, 255, 100, 100,});
+            TextBox noBox = new TextBox("None", noRect, args);
+            noBox.hide();
+            labelBoxes.add(noBox);
+
             //Item demo
-            imageRect = new Rect( (int) (Constants.width * 0.35), (int) (Constants.height * 0.2), (int) (Constants.width * 0.65), (int) (Constants.height * 0.8) );
+            imageRect = new Rect( (int) (Constants.width * 0.25), (int) (Constants.height * 0.3), (int) (Constants.width * 0.75), (int) (Constants.height * 0.75) );
 
 
             ArrayList<Bitmap> LOB = new ArrayList<>();
@@ -121,8 +136,6 @@ public class PetSetupScene implements Scene{
                 }
 
                 images.add(LOBB);
-
-                System.out.println("Group added");
             }
         }
 
@@ -170,8 +183,14 @@ public class PetSetupScene implements Scene{
     }
 
     private void drawItem(Canvas canvas) {
-        if (state > 0 && state != 4) {
-            Draw.drawPNG(canvas, images.get(state - 1).get(index), imageRect.left, imageRect.top);
+        if (state > 0) {
+            if (state == 1) {
+                Draw.drawPNG(canvas, images.get(0).get(index), imageRect.left, imageRect.top);
+            } else if (state == 4){
+                pet.draw(canvas, imageRect);
+            } else if (index > 0) {
+                Draw.drawPNG(canvas, images.get(state - 1).get(index - 1), imageRect.left, imageRect.top);
+            }
         }
     }
 
@@ -193,8 +212,6 @@ public class PetSetupScene implements Scene{
             if (focused) {
                 for (Button button : buttons) {
                     int response = button.receiveTouch(event);
-
-                    System.out.println(response);
 
                     switch (response) {
                         case BACK:
@@ -242,7 +259,12 @@ public class PetSetupScene implements Scene{
             state--;
             if (state == 1) {
                 labelBoxes.get(0).show();
+            } if (state == 3) {
+                labelBoxes.get(1).show();
+                ((ArrowButton) buttons.get(RIGHT)).show();
             }
+            labelBoxes.get(1).updateText(labels[state - 1]);
+            index = 0;
         } else if (state == 1) {
             returnTo = Constants.LAST_SCENE;
         }
@@ -253,45 +275,65 @@ public class PetSetupScene implements Scene{
         switch (state) {
 
             case 1:
-                EnterCode();
-                petType = (PetType) Constants.petTypes.values().toArray()[index];
-                index = 0;
-                labelBoxes.get(0).hide();
+                if (EnterCode()) {
+                    petType = (PetType) Constants.petTypes.values().toArray()[index];
+                    index = 0;
+                    labelBoxes.get(0).hide();
+                    helpBoxes.get(0).hide();
+                    ((ArrowButton) buttons.get(RIGHT)).show();
+                }
                 break;
 
             case 2:
-                hat = Constants.getWearable(index, Wearable.HAT);
+                if (index != 0) {
+                    hat = Constants.getWearable(index - 1, Wearable.HAT);
+                }
                 index = 0;
+                ((ArrowButton) buttons.get(RIGHT)).show();
                 break;
 
             case 3:
-                shoes = Constants.getWearable(index, Wearable.SHOES);
+                if (index != 0) {
+                    shoes = Constants.getWearable(index - 1, Wearable.SHOES);
+                }
                 index = 0;
-                break;
+                ((ArrowButton) buttons.get(LEFT)).hide();
+                ((ArrowButton) buttons.get(RIGHT)).hide();
+                labelBoxes.get(2).hide();
+                labelBoxes.get(1).hide();
+                state++;
+                createPet();
+                return;
 
             case 4:
                 index = 0;
                 submit();
-                break;
+                return;
 
             default:
-                break;
+                return;
         }
 
-        labelBoxes.get(0).updateText(labels[state - 1]);
+        labelBoxes.get(2).show();
+        ((ArrowButton) buttons.get(LEFT)).hide();
+        labelBoxes.get(1).updateText(labels[state]);
 
         state++;
     }
 
-    private void submit() {
-
-        int values = Constants.sharedPref.getInt("PetCount", 1);
-
-        Constants.addInt("PetCount", values);
-
+    private void createPet() {
         pet = new Pet(name, petType);
-        pet.addWearable(hat);
-        pet.addWearable(shoes);
+        if (hat != null) {
+            pet.addWearable(hat);
+        }
+        if (shoes != null) {
+            pet.addWearable(shoes);
+        }
+    }
+
+    private void submit() {
+        int values = Constants.sharedPref.getInt("PetCount", 1);
+        Constants.addInt("PetCount", values);
 
         returnTo = Constants.HOME_SCENE;
     }
@@ -307,29 +349,32 @@ public class PetSetupScene implements Scene{
             case 1: //Pet type picking
                 if (index <  Constants.petTypes.size() - 1) {
                     index++;
-                }
-                if (index == Constants.petTypes.size() - 1) {
-                    ((ArrowButton) buttons.get(RIGHT)).hide();
+
+                    if (index == Constants.petTypes.size() - 1) {
+                        ((ArrowButton) buttons.get(RIGHT)).hide();
+                    }
                 }
 
                 break;
 
             case 2: //Hat picking
-                if (index <  Constants.wearables.get(Wearable.HAT).size() - 1) {
+                if (index <  Constants.wearables.get(Wearable.HAT).size()) {
                     index++;
-                }
-                if (index == Constants.wearables.get(Wearable.HAT).size() - 1) {
-                    ((ArrowButton) buttons.get(RIGHT)).hide();
+
+                    if (index == Constants.wearables.get(Wearable.HAT).size()) {
+                        ((ArrowButton) buttons.get(RIGHT)).hide();
+                    }
                 }
 
                 break;
 
             case 3: //Shoes
-                if (index <  Constants.wearables.get(Wearable.SHOES).size() - 1) {
+                if (index < Constants.wearables.get(Wearable.SHOES).size()) {
                     index++;
-                }
-                if (index == Constants.wearables.get(Wearable.SHOES).size() - 1) {
-                    ((ArrowButton) buttons.get(RIGHT)).hide();
+
+                    if (index == Constants.wearables.get(Wearable.SHOES).size()) {
+                        ((ArrowButton) buttons.get(RIGHT)).hide();
+                    }
                 }
 
                 break;
@@ -337,6 +382,7 @@ public class PetSetupScene implements Scene{
 
         if (index == 1) {
             ((ArrowButton) buttons.get(LEFT)).show();
+            labelBoxes.get(2).hide();
         }
     }
 
@@ -345,52 +391,57 @@ public class PetSetupScene implements Scene{
         if (state > 0) {
             switch (state) {
                 case 1: //Pet type picking
-                    if (index == Constants.petTypes.size() - 1) {
+                    if (index == Constants.petTypes.size()) {
                         ((ArrowButton) (buttons.get(RIGHT))).show();
                     }
 
                 case 2: //Hat picking
-                    if (index == Constants.wearables.get(Wearable.HAT).size() - 1) {
+                    if (index == Constants.wearables.get(Wearable.HAT).size()) {
                         ((ArrowButton) (buttons.get(RIGHT))).show();
                     }
 
                 case 3: //Shoes
-                    if (index == Constants.wearables.get(Wearable.SHOES).size() - 1) {
+                    if (index == Constants.wearables.get(Wearable.SHOES).size()) {
                         ((ArrowButton) (buttons.get(RIGHT))).show();
                     }
             }
-        }
 
-        if (state > 0) {
             if (index > 0) {
                 index--;
 
                 if (index == 0) {
                     ((ArrowButton) buttons.get(LEFT)).hide();
+                    if (state > 1) {
+                        labelBoxes.get(2).show();
+                    }
                 }
             }
         }
     }
 
-    private void EnterCode(){
+    private boolean EnterCode(){
         int index = 0;
         boolean passed = true;
 
         for (TextForm textForm: textForms){
             if (!textForm.isValid()){
                 helpBoxes.get(index).show();
+                labelBoxes.get(1).hide();
                 passed = false;
             } else {
                 helpBoxes.get(index).hide();
+                labelBoxes.get(1).show();
             }
             index++;
         }
 
         if (!passed || textForms.isEmpty()){
-            return;
+            return false;
         }
 
         name = textForms.get(0).getString();
+
+        return true;
     }
 
     private void badPage(){

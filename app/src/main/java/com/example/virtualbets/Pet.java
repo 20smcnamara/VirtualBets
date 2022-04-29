@@ -2,6 +2,7 @@ package com.example.virtualbets;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,23 +48,54 @@ public class Pet {
 
     public void draw(Canvas canvas, int x, int y){
         Bitmap picture = type.getImage();
+        draw(canvas, x, y, picture);
+    }
+
+    public void draw(Canvas canvas, int x, int y, Bitmap picture){
 
         ArrayList<Location> heads = type.getHeads();
         ArrayList<Location> feet = type.getShoes();
 
-        Draw.drawPNG(canvas, picture, x - picture.getWidth() / 2, y - picture.getHeight() / 2);
+        Draw.drawPNG(canvas, picture, x, y);
 
         for (Wearable wearable: wearing){
             switch (wearable.getType()){
                 case Wearable.HAT:
                     for (Location loc: heads){
-                        wearable.draw(canvas, loc, 1f);
+                        float xRat = loc.getXRatio(picture.getWidth());
+                        float yRat = loc.getYRatio(picture.getHeight());
+
+                        int nx = (int) (x + loc.getX() * xRat);
+                        int ny = (int) (y + loc.getY() * yRat);
+                        int nw = (int) ((loc.getRect().width() - nx) * xRat);
+                        int nh = (int) ((loc.getRect().height() - ny) * yRat);
+
+                        Rect rect = new Rect( nx, (int) (ny - (nh * 0.80)), nx + nw, (int) (ny + (nh * 0.2)));
+
+                        wearable.draw(canvas, rect, loc.getDir());
                     }
                 case Wearable.SHOES:
                     for (Location loc: feet){
-                        wearable.draw(canvas, loc, 1f);
+                        float xRat = loc.getXRatio(picture.getWidth());
+                        float yRat = loc.getYRatio(picture.getHeight());
+
+                        int nx = (int) (x + loc.getX() * xRat);
+                        int ny = (int) (y + loc.getY() * yRat);
+                        int nw = (int) ((loc.getRect().width() - nx) * xRat);
+                        int nh = (int) ((loc.getRect().height() - ny) * yRat);
+
+                        Rect rect = new Rect( nx, (int) y + picture.getHeight() - ny - nh, nx + nw, y + picture.getHeight() - ny);
+
+                        wearable.draw(canvas, rect, loc.getDir());
                     }
             }
         }
+    }
+
+    public void draw(Canvas canvas, Rect imageRect) {
+        Bitmap scaledPicture = type.getImage();
+        scaledPicture = Bitmap.createScaledBitmap(scaledPicture, imageRect.width(), imageRect.height(), false);
+
+        draw(canvas, imageRect.left, imageRect.top, scaledPicture);
     }
 }

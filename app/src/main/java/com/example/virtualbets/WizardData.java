@@ -23,8 +23,8 @@ public class WizardData {
                                                             "0|wpiHat|WPI Hat|WPI-",
                                                             "1|wpiShoe|WPI Shoe|WPI-",
                                                             "1|basicShoe|Basic Shoe|WPI-"};
-    private static final String[] Pets = new String[] { "Tongus Elongus|telon|255,13,20,10:|250,357,17,15:20,355,17,15",
-                                                            "Steve|steve|190,30,40,40:|136,365,132,60:" };
+    private static final String[] Pets = new String[] { "Tongus Elongus|telon|270,1,10,10:|250,357,17,15:20,355,17,15",
+                                                            "Steve|steve|80,40,40,40:|136,365,132,60:" };
 
 
     private final StringBuilder builder = new StringBuilder();
